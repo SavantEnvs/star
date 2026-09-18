@@ -1,0 +1,14 @@
+project: savantenvs/star
+target: star-buggy-mhh-run-20
+
+# Run 20's own cmd was `/STAR --genomeDir test --genomeFastaFiles @@ --runMode genomeGenerate`, i.e.
+# relative output paths resolved against the cwd. Mayhem mounts the image read-only during coverage
+# collection, so writing the genome index / Log.out / _STARtmp under /mayhem makes STAR bail at
+# "could not create output file" before it ever reads the input (run 2: 0 of 154 testcases covered,
+# edges 0, dynamic analysis failed). Same invocation, outputs redirected to /tmp.
+cmds:
+  - cmd: /mayhem/build/STAR --genomeDir /tmp/star-genome --genomeFastaFiles @@ --runMode genomeGenerate --outFileNamePrefix /tmp/
+
+testsuite:
+  - https://$MAYHEM_DOMAIN/$MAYHEM_PROJECT/$MAYHEM_TARGET/testsuite.tar
+  - file://mayhem/star-buggy-mhh-run-20/testsuite
